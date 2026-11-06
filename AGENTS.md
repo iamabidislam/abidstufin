@@ -28,3 +28,8 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## STUFIN architecture
+- All user financial data lives on-device in IndexedDB via Dexie (`src/lib/db.ts`); no backend — privacy is a core product promise.
+- Money is stored as integer minor units (pence); shifts snapshot their hourly rate so later rate changes never alter history.
+- Pure calculations (shift hours/pay, periods, due status) live in `src/lib/finance.ts` with tests in `finance.test.ts`.
