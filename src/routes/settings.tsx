@@ -43,8 +43,8 @@ function Settings() {
   const notif = async (on: boolean) => {
     if (on && "Notification" in window) {
       const p = await Notification.requestPermission();
-      if (p !== "granted") return toast.error("Notifications are blocked. On iPhone, add STUFIN to your Home Screen first.");
-    } else if (on) return toast.error("This browser doesn't support notifications.");
+      if (p !== "granted") { toast.error("Notifications are blocked. On iPhone, add STUFIN to your Home Screen first."); return; }
+    } else if (on) { toast.error("This browser doesn't support notifications."); return; }
     await saveSettings({ notifications: on });
   };
 

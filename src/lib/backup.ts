@@ -63,7 +63,7 @@ export async function loadDemo() {
     { id: uid(), name: "Campus Library", position: "Assistant", rate: 1185, demo: true },
   ];
   const shifts = Array.from({ length: 10 }, (_, i) => {
-    const w = wp[i % 2]; const minutes = shiftMinutes("09:00", i % 3 ? "15:00" : "14:00", 30);
+    const w = wp[i % 2]!; const minutes = shiftMinutes("09:00", i % 3 ? "15:00" : "14:00", 30);
     return { id: uid(), workplaceId: w.id, workplaceName: w.name, date: d(-i * 3), start: "09:00", end: i % 3 ? "15:00" : "14:00", breakMin: 30, rate: w.rate, minutes, earned: shiftEarnings(minutes, w.rate), demo: true };
   });
   const cats = [
@@ -73,8 +73,8 @@ export async function loadDemo() {
     { id: uid(), name: "Subscriptions", icon: "Tv", color: "red", demo: true },
   ];
   const exps = Array.from({ length: 14 }, (_, i) => {
-    const c = cats[i % 4];
-    return { id: uid(), categoryId: c.id, categoryName: c.name, amount: [2340, 1850, 950, 1099][i % 4], date: d(-i * 2), demo: true };
+    const c = cats[i % 4]!;
+    return { id: uid(), categoryId: c.id, categoryName: c.name, amount: [2340, 1850, 950, 1099][i % 4]!, date: d(-i * 2), demo: true };
   });
   const tId = uid(); const i1 = uid();
   await db.transaction("rw", TABLES.map((t) => db.table(t)), async () => {

@@ -1,6 +1,6 @@
 import { useState, type FormEvent, type ReactNode } from "react";
 import { toast } from "sonner";
-import { Plus } from "lucide-react";
+import { Plus, Receipt } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -49,7 +49,7 @@ export function WorkplaceForm({ initial, onDone }: { initial?: Workplace; onDone
   });
   const submit = (e: FormEvent) => {
     e.preventDefault();
-    if (!f.name.trim()) return toast.error("Enter a workplace name.");
+    if (!f.name.trim()) { toast.error("Enter a workplace name."); return; }
     const rate = money(f.rate, "hourly rate"); if (rate === null) return;
     attempt(async () => {
       const rec: Workplace = { id: initial?.id ?? uid(), ...f, name: f.name.trim(), rate };
@@ -95,9 +95,9 @@ export function ShiftForm({ workplaces, initial, onDone }: { workplaces: Workpla
   const submit = (e: FormEvent) => {
     e.preventDefault();
     const wp = workplaces.find((w) => w.id === f.workplaceId) ?? (initial ? { id: initial.workplaceId, name: initial.workplaceName } : undefined);
-    if (!wp) return toast.error("Choose a workplace.");
+    if (!wp) { toast.error("Choose a workplace."); return; }
     const r = money(f.rate, "hourly rate"); if (r === null) return;
-    if (minutes <= 0) return toast.error("Break is longer than the shift.");
+    if (minutes <= 0) { toast.error("Break is longer than the shift."); return; }
     attempt(() => db.work_shifts.put({
       id: initial?.id ?? uid(), workplaceId: wp.id, workplaceName: wp.name, date: f.date, start: f.start, end: f.end,
       breakMin: Number(f.breakMin) || 0, rate: r, minutes, earned: shiftEarnings(minutes, r), notes: f.notes,
@@ -160,8 +160,8 @@ export function CategoryForm({ initial, existing, onDone }: { initial?: ExpenseC
   const submit = (e: FormEvent) => {
     e.preventDefault();
     const n = name.trim();
-    if (!n) return toast.error("Enter a category name.");
-    if (existing.some((c) => c.id !== initial?.id && c.name.toLowerCase() === n.toLowerCase())) return toast.error(`"${n}" already exists.`);
+    if (!n) { toast.error("Enter a category name."); return; }
+    if (existing.some((c) => c.id !== initial?.id && c.name.toLowerCase() === n.toLowerCase())) { toast.error(`"${n}" already exists.`); return; }
     const rec = { id: initial?.id ?? uid(), name: n, icon, color };
     attempt(async () => {
       await db.expense_categories.put(rec);
@@ -206,7 +206,7 @@ export function ExpenseForm({ categories, initial, presetCategory, onDone }: {
     return <CategoryForm existing={categories} onDone={(c) => { setCatId(c.id); setNewCat(false); }} />;
   const submit = (e: FormEvent) => {
     e.preventDefault();
-    const c = categories.find((x) => x.id === catId); if (!c) return toast.error("Choose a category.");
+    const c = categories.find((x) => x.id === catId); if (!c) { toast.error("Choose a category."); return; }
     const m = money(amt, "amount"); if (m === null) return;
     attempt(() => db.expenses.put({ id: initial?.id ?? uid(), categoryId: c.id, categoryName: c.name, amount: m, date, method, notes }),
       initial ? "Expense updated" : "Expense saved", onDone);
@@ -215,7 +215,7 @@ export function ExpenseForm({ categories, initial, presetCategory, onDone }: {
     <form onSubmit={submit} className="space-y-4">
       <div className="flex flex-wrap gap-2">
         {categories.map((c) => {
-          const I = ICONS[c.icon] ?? ICONS.Receipt;
+          const I = ICONS[c.icon] ?? Receipt;
           return (
             <button type="button" key={c.id} onClick={() => setCatId(c.id)}
               className={cn("flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm font-medium", catId === c.id ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card")}>
@@ -249,10 +249,10 @@ export function TuitionForm({ initial, onDone }: { initial?: TuitionRecord; onDo
   });
   const submit = (e: FormEvent) => {
     e.preventDefault();
-    if (!f.university.trim()) return toast.error("Enter the university name.");
+    if (!f.university.trim()) { toast.error("Enter the university name."); return; }
     const total = money(f.total, "tuition fee"); if (total === null) return;
     const discount = money(f.discount || "0", "discount", true); if (discount === null) return;
-    if (discount > total) return toast.error("Discount can't exceed the fee.");
+    if (discount > total) { toast.error("Discount can't exceed the fee."); return; }
     attempt(() => db.tuition_records.put({ id: initial?.id ?? uid(), ...f, total, discount }), "Tuition saved", onDone);
   };
   return (
@@ -298,7 +298,7 @@ export function TuitionPayForm({ tuitionId, installmentId, remaining, onDone }: 
   const submit = (e: FormEvent) => {
     e.preventDefault();
     const m = money(amt, "amount"); if (m === null) return;
-    if (m > remaining) return toast.error("That's more than what's left on this instalment.");
+    if (m > remaining) { toast.error("That's more than what's left on this instalment."); return; }
     attempt(async () => {
       const dup = await db.tuition_payments.where("installmentId").equals(installmentId).filter((p) => p.amount === m && p.date === date).count();
       if (dup) throw new Error("This payment is already recorded.");
@@ -325,7 +325,7 @@ export function AccommodationForm({ initial, onDone }: { initial?: Accommodation
   });
   const submit = (e: FormEvent) => {
     e.preventDefault();
-    if (!f.name.trim()) return toast.error("Enter the accommodation name.");
+    if (!f.name.trim()) { toast.error("Enter the accommodation name."); return; }
     const rent = money(f.rent, "rent"); if (rent === null) return;
     attempt(() => db.accommodation.put({ id: initial?.id ?? uid(), ...f, rent, customDays: Number(f.customDays) || 28 }), "Accommodation saved", onDone);
   };
@@ -354,7 +354,7 @@ export function RecurringForm({ initial, onDone }: { initial?: RecurringPayment;
   const [f, setF] = useState({ name: initial?.name ?? "", amount: initial ? fromMinor(initial.amount) : "", frequency: initial?.frequency ?? "monthly", nextDate: initial?.nextDate ?? today() });
   const submit = (e: FormEvent) => {
     e.preventDefault();
-    if (!f.name.trim()) return toast.error("Enter a name.");
+    if (!f.name.trim()) { toast.error("Enter a name."); return; }
     const amount = money(f.amount, "amount"); if (amount === null) return;
     attempt(() => db.recurring_payments.put({ id: initial?.id ?? uid(), ...f, amount }), "Bill saved", onDone);
   };
@@ -383,7 +383,7 @@ export function ReminderForm({ initial, onDone }: { initial?: Reminder; onDone: 
   });
   const submit = (e: FormEvent) => {
     e.preventDefault();
-    if (!f.name.trim()) return toast.error("Enter a payment name.");
+    if (!f.name.trim()) { toast.error("Enter a payment name."); return; }
     const amount = money(f.amount || "0", "amount", true); if (amount === null) return;
     attempt(() => db.reminders.put({ id: initial?.id ?? uid(), ...f, amount, paid: initial?.paid ?? false }), "Reminder saved", onDone);
   };

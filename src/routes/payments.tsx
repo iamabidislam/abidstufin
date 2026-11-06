@@ -16,7 +16,7 @@ import { useFinance, useMoney } from "@/lib/hooks";
 import { upcoming, type DueItem } from "@/lib/upcoming";
 
 export const Route = createFileRoute("/payments")({
-  validateSearch: (s: Record<string, unknown>) => ({ add: typeof s.add === "string" ? s.add : undefined }),
+  validateSearch: (s: Record<string, unknown>): { add?: string } => (typeof s["add"] === "string" ? { add: s["add"] } : {}),
   head: () => ({
     meta: [
       { title: "Payments, tuition & rent — STUFIN" },
@@ -46,7 +46,7 @@ function Payments() {
   useEffect(() => {
     if (!add) return;
     setSheet({ kind: "reminder" });
-    nav({ to: "/payments", search: { add: undefined }, replace: true });
+    nav({ to: "/payments", search: {}, replace: true });
   }, [add, nav]);
 
   const items = useMemo(() => (d ? upcoming(d) : []), [d]);
@@ -65,7 +65,7 @@ function Payments() {
     if (!d) return;
     if (x.kind === "tuition") {
       const inst = d.installments.find((i) => i.id === x.refId)!;
-      return setSheet({ kind: "tpay", tuitionId: inst.tuitionId, installmentId: inst.id, remaining: x.amount - x.paid });
+      { setSheet({ kind: "tpay", tuitionId: inst.tuitionId, installmentId: inst.id, remaining: x.amount - x.paid }); return; }
     }
     if (x.kind === "rent" || x.kind === "bill") {
       const rec = x.kind === "rent" ? d.accom.find((a) => a.id === x.refId)! : d.recurring.find((a) => a.id === x.refId)!;
@@ -75,7 +75,7 @@ function Payments() {
         if (x.kind === "rent") await db.accommodation.update(x.refId, { nextDate: next });
         else await db.recurring_payments.update(x.refId, { nextDate: next });
       });
-      return toast.success(`Marked paid · next due ${format(parseISO(nextDue(rec.nextDate, rec.frequency, rec.customDays)), "d MMM")}`);
+      { toast.success(`Marked paid · next due ${format(parseISO(nextDue(rec.nextDate, rec.frequency, rec.customDays)), "d MMM")}`); return; }
     }
     const r = d.reminders.find((a) => a.id === x.refId)!;
     await db.payment_records.add({ id: uid(), refType: "reminder", refId: r.id, name: r.name, amount: r.amount, dueDate: r.dueDate, date: today() });

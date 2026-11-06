@@ -14,7 +14,7 @@ import { buildSeries, inRange } from "@/lib/finance";
 import { useFinance, useMoney } from "@/lib/hooks";
 
 export const Route = createFileRoute("/earnings")({
-  validateSearch: (s: Record<string, unknown>) => ({ add: typeof s.add === "string" ? s.add : undefined }),
+  validateSearch: (s: Record<string, unknown>): { add?: string } => (typeof s["add"] === "string" ? { add: s["add"] } : {}),
   head: () => ({
     meta: [
       { title: "Earnings & shifts — STUFIN" },
@@ -43,7 +43,7 @@ function Earnings() {
   useEffect(() => {
     if (!add || !d) return;
     setSheet(d.workplaces.length ? { kind: "shift" } : { kind: "workplace" });
-    nav({ to: "/earnings", search: { add: undefined }, replace: true });
+    nav({ to: "/earnings", search: {}, replace: true });
   }, [add, d, nav]);
 
   const v = useMemo(() => {
@@ -114,7 +114,7 @@ function Earnings() {
       <div className="space-y-2">
         {v?.list.length ? v.list.map((s) => {
           const got = v.received(s.id);
-          const status = got >= s.earned ? ["paid", "Received"] : got > 0 ? ["partial", "Partially received"] : ["upcoming", "Estimated"];
+          const status: [string, string] = got >= s.earned ? ["paid", "Received"] : got > 0 ? ["partial", "Partially received"] : ["upcoming", "Estimated"];
           return (
             <Card key={s.id} className="p-4">
               <div className="flex items-start justify-between gap-3">

@@ -14,7 +14,7 @@ import { useFinance, useMoney } from "@/lib/hooks";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/expenses")({
-  validateSearch: (s: Record<string, unknown>) => ({ add: typeof s.add === "string" ? s.add : undefined }),
+  validateSearch: (s: Record<string, unknown>): { add?: string } => (typeof s["add"] === "string" ? { add: s["add"] } : {}),
   head: () => ({
     meta: [
       { title: "Expenses — STUFIN" },
@@ -43,7 +43,7 @@ function Expenses() {
   useEffect(() => {
     if (!add) return;
     setSheet({ kind: "expense" });
-    nav({ to: "/expenses", search: { add: undefined }, replace: true });
+    nav({ to: "/expenses", search: {}, replace: true });
   }, [add, nav]);
 
   const v = useMemo(() => {
