@@ -7,7 +7,7 @@ import {
 import { useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { periodRange, type PeriodKey, type Range } from "@/lib/finance";
-import { useSettings, useThemeSync } from "@/lib/hooks";
+import { useReminderNotifier, useSettings, useThemeSync } from "@/lib/hooks";
 import { Input } from "@/components/ui/input";
 
 export const ICONS: Record<string, LucideIcon> = {
@@ -30,6 +30,7 @@ const NAV = [
 
 export function AppShell({ children }: { children: ReactNode }) {
   useThemeSync();
+  useReminderNotifier();
   const { pathname } = useLocation();
   return (
     <div className="mx-auto min-h-screen max-w-md bg-background pt-safe">

@@ -36,3 +36,27 @@ export function useFinance() {
   }, []);
 }
 export type FinanceData = NonNullable<ReturnType<typeof useFinance>>;
+
+/** Shows local notifications for due reminders while the app is open. Never marks anything paid. */
+export function useReminderNotifier() {
+  const { notifications } = useSettings();
+  useEffect(() => {
+    if (!notifications || typeof Notification === "undefined" || Notification.permission !== "granted") return;
+    const check = async () => {
+      const now = new Date();
+      const stamp = `${now.toISOString().slice(0, 10)}T${now.toTimeString().slice(0, 5)}`;
+      const seen: string[] = JSON.parse(localStorage.getItem("stufin-notified") || "[]");
+      const due = (await db.reminders.toArray()).filter((r) => !r.paid && `${r.remindDate}T${r.remindTime}` <= stamp);
+      for (const r of due) {
+        const k = `${r.id}:${r.dueDate}`;
+        if (seen.includes(k)) continue;
+        new Notification("STUFIN payment reminder", { body: `${r.name} is due ${r.dueDate}`, icon: "/icon-512.png" });
+        seen.push(k);
+      }
+      localStorage.setItem("stufin-notified", JSON.stringify(seen.slice(-200)));
+    };
+    check();
+    const t = setInterval(check, 60_000);
+    return () => clearInterval(t);
+  }, [notifications]);
+}
