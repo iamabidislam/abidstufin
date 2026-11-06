@@ -1,0 +1,12 @@
+{
+  "name": "STUFIN",
+  "short_name": "STUFIN",
+  "description": "Know your money. Control your future.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F7F9FC",
+  "theme_color": "#152238",
+  "icons": [
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

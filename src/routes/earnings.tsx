@@ -10,7 +10,7 @@ import { Confirm } from "@/components/stufin/confirm";
 import { FinanceChart } from "@/components/stufin/FinanceChart";
 import { Card, Empty, PageTitle, PeriodPicker, SectionTitle, StatusPill, usePeriod, nativeSelect } from "@/components/stufin/ui";
 import { db, type Workplace, type WorkShift } from "@/lib/db";
-import { buildSeries, fromMinor, inRange } from "@/lib/finance";
+import { buildSeries, inRange } from "@/lib/finance";
 import { useFinance, useMoney } from "@/lib/hooks";
 
 export const Route = createFileRoute("/earnings")({
@@ -149,4 +149,3 @@ function Earnings() {
     </>
   );
 }
-void fromMinor;

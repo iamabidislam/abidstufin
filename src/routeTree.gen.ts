@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as EarningsRouteImport } from './routes/earnings'
 import { Route as ExpensesRouteImport } from './routes/expenses'
+import { Route as PaymentsRouteImport } from './routes/payments'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,35 +29,44 @@ const ExpensesRoute = ExpensesRouteImport.update({
   path: '/expenses',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PaymentsRoute = PaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/earnings': typeof EarningsRoute
   '/expenses': typeof ExpensesRoute
+  '/payments': typeof PaymentsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/earnings': typeof EarningsRoute
   '/expenses': typeof ExpensesRoute
+  '/payments': typeof PaymentsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/earnings': typeof EarningsRoute
   '/expenses': typeof ExpensesRoute
+  '/payments': typeof PaymentsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/earnings' | '/expenses'
+  fullPaths: '/' | '/earnings' | '/expenses' | '/payments'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/earnings' | '/expenses'
-  id: '__root__' | '/' | '/earnings' | '/expenses'
+  to: '/' | '/earnings' | '/expenses' | '/payments'
+  id: '__root__' | '/' | '/earnings' | '/expenses' | '/payments'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   EarningsRoute: typeof EarningsRoute
   ExpensesRoute: typeof ExpensesRoute
+  PaymentsRoute: typeof PaymentsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -82,6 +92,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExpensesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/payments': {
+      id: '/payments'
+      path: '/payments'
+      fullPath: '/payments'
+      preLoaderRoute: typeof PaymentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -89,6 +106,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   EarningsRoute: EarningsRoute,
   ExpensesRoute: ExpensesRoute,
+  PaymentsRoute: PaymentsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
