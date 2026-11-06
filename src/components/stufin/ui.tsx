@@ -4,7 +4,7 @@ import {
   Music, Plane, Receipt, Settings, ShoppingBag, ShoppingCart, Smartphone, Train, Tv, Utensils, Wallet, Wifi, Briefcase,
   CalendarClock,
 } from "lucide-react";
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { periodRange, type PeriodKey, type Range } from "@/lib/finance";
 import { useSettings, useThemeSync } from "@/lib/hooks";
@@ -132,7 +132,6 @@ export function PeriodPicker({ value, onChange, custom, onCustom, compact }: {
   );
 }
 
-import { useState } from "react";
 export function usePeriod(initial: PeriodKey = "this-month") {
   const { weekStartsOn } = useSettings();
   const [key, setKey] = useState<PeriodKey>(initial);
