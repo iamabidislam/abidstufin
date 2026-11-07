@@ -6,10 +6,15 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
+// STUFIN_IOS=1 produces a static single-page build for the native iPhone wrapper (Capacitor).
+// The normal web/publish build is unaffected.
+const isIOS = process.env.STUFIN_IOS === "1";
+
 export default defineConfig({
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
     server: { entry: "server" },
+    ...(isIOS ? { spa: { enabled: true } } : {}),
   },
 });
