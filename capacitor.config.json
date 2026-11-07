@@ -1,0 +1,9 @@
+{
+  "appId": "com.stufin.app",
+  "appName": "STUFIN",
+  "webDir": "dist/client",
+  "ios": {
+    "contentInset": "never",
+    "backgroundColor": "#152238"
+  }
+}
