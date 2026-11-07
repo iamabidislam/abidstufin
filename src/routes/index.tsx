@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { format, parseISO } from "date-fns";
 import { ArrowDownRight, ArrowUpRight, Bell, Briefcase, CalendarPlus, Clock, Receipt, BarChart3 } from "lucide-react";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { FinanceChart } from "@/components/stufin/FinanceChart";
 import { Card, Empty, PeriodPicker, SectionTitle, StatusPill, usePeriod, ICONS } from "@/components/stufin/ui";
 import { buildSeries, inRange, STATUS_LABEL } from "@/lib/finance";
@@ -23,12 +23,27 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
-function greeting() {
-  const h = new Date().getHours();
+function greeting(now: Date) {
+  const h = now.getHours();
   return h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening";
 }
 
 function Home() {
+  const [now, setNow] = useState<Date | null>(null);
+  useEffect(() => {
+    const refresh = () => setNow(new Date());
+    refresh();
+    const interval = window.setInterval(refresh, 1000);
+    window.addEventListener("focus", refresh);
+    window.addEventListener("pageshow", refresh);
+    document.addEventListener("visibilitychange", refresh);
+    return () => {
+      window.clearInterval(interval);
+      window.removeEventListener("focus", refresh);
+      window.removeEventListener("pageshow", refresh);
+      document.removeEventListener("visibilitychange", refresh);
+    };
+  }, []);
   const d = useFinance();
   const s = useSettings();
   const money = useMoney();
@@ -51,8 +66,8 @@ function Home() {
     <>
       <header className="mb-5 flex items-start justify-between">
         <div>
-          <p className="text-sm text-muted-foreground">{format(new Date(), "EEEE d MMMM")}</p>
-          <h1 className="text-2xl font-bold tracking-tight">{greeting()}{s.firstName && `, ${s.firstName}`}</h1>
+          <p className="text-sm text-muted-foreground">{now ? format(now, "EEEE d MMMM") : "\u00a0"}</p>
+          <h1 className="text-2xl font-bold tracking-tight">{now ? greeting(now) : "Hello"}{s.firstName && `, ${s.firstName}`}</h1>
         </div>
         <Link to="/payments" aria-label="Payment reminders" className="relative grid h-11 w-11 place-items-center rounded-full bg-card shadow-sm">
           <Bell className="h-5 w-5" />
