@@ -33,3 +33,4 @@ use the editor.
 - All user financial data lives on-device in IndexedDB via Dexie (`src/lib/db.ts`); no backend — privacy is a core product promise.
 - Money is stored as integer minor units (pence); shifts snapshot their hourly rate so later rate changes never alter history.
 - Pure calculations (shift hours/pay, periods, due status) live in `src/lib/finance.ts` with tests in `finance.test.ts`.
+- Native iPhone build runs only in GitHub Actions (`.github/workflows/ios.yml`): normal `vite build`, then `scripts/ios-render-shell.mjs` renders `/` into `dist/client/index.html` for Capacitor; Capacitor packages are installed in CI only so the web/publish build stays untouched.
