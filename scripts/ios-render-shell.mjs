@@ -18,6 +18,6 @@ if (res.status !== 200) throw new Error(`Start page render failed with status ${
 const html = await res.text();
 if (!html.includes("<html")) throw new Error("Start page render returned no HTML");
 
-await writeFile(resolve("dist/client/index.html"), html);
-console.log(`Wrote dist/client/index.html (${html.length} bytes)`);
+await writeFile(resolve(".output/public/index.html"), html);
+console.log(`Wrote .output/public/index.html (${html.length} bytes)`);
 process.exit(0);
