@@ -1,11 +1,11 @@
-// Renders the start page from the normal build into dist/client/index.html so the
+// Renders the start page from the normal build into .output/public/index.html so the
 // iPhone wrapper (Capacitor) can load STUFIN fully offline from bundled files.
 // Run after `vite build` with: bun scripts/ios-render-shell.mjs
 import { writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 
-const serverEntry = pathToFileURL(resolve("dist/server/index.mjs")).href;
+const serverEntry = pathToFileURL(resolve(".output/server/index.mjs")).href;
 const mod = await import(serverEntry);
 const handler = mod.default ?? mod;
 

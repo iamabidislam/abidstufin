@@ -24,7 +24,7 @@ jobs:
         run: |
           bunx vite build
           bun scripts/ios-render-shell.mjs
-          ls dist/client
+          ls .output/public
 
       - name: Add iPhone wrapper
         run: |
